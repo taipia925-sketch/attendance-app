@@ -19,4 +19,5 @@ Ogni modifica va applicata a **entrambe** le versioni:
 
 ## Note sul codice dell'app
 - Tendine: tutte le celle compilabili usano le liste del Foglio2; per velocità le tendine della tabella nascono "pigre" (`data-lazy`) e ricevono l'elenco completo al primo tocco/focus.
-- Dati salvati nel browser (localStorage): `att_work_<anno>_<mese>`, `att_commesse`, `att_name`, `att_month`, `att_round`, `att_fill`, `att_gate`.
+- L'interfaccia è divisa in 4 schermate (Chi sei · Timbrature · Giorni · Scarica): `goStep(n)`, barra `#stepper`, pulsanti `#btnBack`/`#btnNext`; il tasto indietro del browser torna al passo precedente (history `#passo-n`). Senza nome non si va oltre il passo 1.
+- Dati per persona (nome tecnico, così i colleghi sullo stesso dispositivo non vedono i dati altrui), in localStorage: `att_work__<NOME>_<anno>_<mese>`, `att_commesse__<NOME>`, `att_fill__<NOME>`. Comuni: `att_name` (ultima persona), `att_month`, `att_round`, `att_gate`, `att_v2` (migrazione fatta: i vecchi `att_work_<a>_<m>`, `att_commesse`, `att_fill` sono stati assegnati alla persona salvata, o a ROBERTO NANNIPIERI che era il predefinito).
