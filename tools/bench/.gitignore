@@ -1,0 +1,5 @@
+img/
+img_test/
+img_hold/
+ocr_cache.json
+truth*.json
