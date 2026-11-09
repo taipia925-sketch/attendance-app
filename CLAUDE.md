@@ -2,11 +2,11 @@
 
 `index.html` è una pagina d'accesso (`tools/gate.html`) che contiene l'app vera cifrata (AES-GCM, chiave PBKDF2-SHA256 300000 iterazioni) nello `<script id="pl">`. Il codice d'accesso NON va mai scritto nel repository: chiedilo all'utente.
 
-Il sito è pubblicato da GitHub Pages dal branch `main`. `sw.js` + `manifest.webmanifest` + `icon-*.png` rendono la webapp installabile e utilizzabile senza rete (strategia "prima la rete": gli aggiornamenti arrivano subito).
+Il sito è pubblicato su **Netlify**: https://presenze-attendance.netlify.app (sito `presenze-attendance`, id d34b7ae6-c7c7-450c-a8f4-b66e0d63053f, team frencli-vora). L'account GitHub è bloccato: niente più GitHub Pages né push. Per pubblicare: `bash tools/deploy_netlify.sh` (carica index.html, sw.js, manifest e icone via API Netlify; il token lo aggiunge il proxy dell'ambiente; verifica i file online tramite l'API). L'utente ha autorizzato a pubblicare gli aggiornamenti su Netlify senza chiedere ogni volta. `sw.js` + `manifest.webmanifest` + `icon-*.png` rendono la webapp installabile e utilizzabile senza rete (strategia "prima la rete": gli aggiornamenti arrivano subito).
 
 ## Regola per ogni modifica richiesta
 Ogni modifica va applicata a **entrambe** le versioni:
-1. **Webapp**: il sito pubblicato dal branch `main`. Dopo aver verificato la modifica, porta i commit su `main` e fai push (oltre al branch di lavoro).
+1. **Webapp**: il sito su Netlify. Dopo aver verificato la modifica, pubblicala con `bash tools/deploy_netlify.sh` (e fai commit in locale).
 2. **App**: il file `index.html` scaricabile. Al termine invia all'utente il file `index.html` aggiornato (SendUserFile, display "attach").
 
 ## Come modificare
@@ -15,7 +15,7 @@ Ogni modifica va applicata a **entrambe** le versioni:
 3. Prova nel browser (Playwright, Chromium in /opt/pw-browsers): ricostruisci un file di prova con `build()` di `tools/app.py` o direttamente con `pack` su una copia.
    Per verificare l'Excel prodotto: togli i valori in cache dalle celle con formula e ricalcola con `soffice --headless --convert-to xlsx`, poi confronta J/X/AA e la riga 42 con i calcoli dell'app.
 4. `python3 tools/app.py pack <codice> <cartella>` — ricifra con lo stesso codice dentro `index.html`.
-5. Commit, push del branch e di `main`, poi invia `index.html` all'utente.
+5. Commit in locale, `bash tools/deploy_netlify.sh`, poi invia `index.html` all'utente.
 
 ## Note sul codice dell'app
 - Passo 3: unico metodo di compilazione multipla è il modulo per intervallo (`#btnQuick`: quali giorni, dal/al, attività, commessa, viaggio/navigazione + ore). Le ore compaiono solo dopo aver scelto VIAGGIO («Ore viaggio», colonna Y) o NAVIGAZIONE («Ore navigazione», colonna Z); stessa regola nei dettagli «Altro» di ogni giorno.
