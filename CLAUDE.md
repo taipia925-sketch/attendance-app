@@ -2,7 +2,7 @@
 
 `index.html` è una pagina d'accesso (`tools/gate.html`) che contiene l'app vera cifrata (AES-GCM, chiave PBKDF2-SHA256 300000 iterazioni) nello `<script id="pl">`. Il codice d'accesso NON va mai scritto nel repository: chiedilo all'utente.
 
-Il sito è pubblicato su **Netlify**: https://presenze-attendance.netlify.app (sito `presenze-attendance`, id d34b7ae6-c7c7-450c-a8f4-b66e0d63053f, team frencli-vora). L'account GitHub è bloccato: niente più GitHub Pages né push. Per pubblicare: `bash tools/deploy_netlify.sh` (carica index.html, sw.js, manifest e icone via API Netlify; il token lo aggiunge il proxy dell'ambiente; verifica i file online tramite l'API). L'utente ha autorizzato a pubblicare gli aggiornamenti su Netlify senza chiedere ogni volta. `sw.js` + `manifest.webmanifest` + `icon-*.png` rendono la webapp installabile e utilizzabile senza rete (strategia "prima la rete": gli aggiornamenti arrivano subito).
+Il sito è pubblicato su **Netlify**: https://attendance-app-it.netlify.app (sito `attendance-app-it`, prima `presenze-attendance`, id d34b7ae6-c7c7-450c-a8f4-b66e0d63053f, team frencli-vora). L'account GitHub è bloccato: niente più GitHub Pages né push. Per pubblicare: `bash tools/deploy_netlify.sh` (carica index.html, sw.js, manifest e icone via API Netlify; il token lo aggiunge il proxy dell'ambiente; verifica i file online tramite l'API). L'utente ha autorizzato a pubblicare gli aggiornamenti su Netlify senza chiedere ogni volta. `sw.js` + `manifest.webmanifest` + `icon-*.png` rendono la webapp installabile e utilizzabile senza rete (strategia "prima la rete": gli aggiornamenti arrivano subito).
 
 ## Regola per ogni modifica richiesta
 Ogni modifica va applicata a **entrambe** le versioni:

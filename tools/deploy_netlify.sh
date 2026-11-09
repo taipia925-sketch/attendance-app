@@ -1,9 +1,9 @@
 #!/bin/bash
-# Pubblica la webapp su Netlify (sito presenze-attendance) e verifica che online ci sia il file nuovo.
+# Pubblica la webapp su Netlify (sito attendance-app-it) e verifica che online ci sia il file nuovo.
 # Il token Netlify non sta qui: lo aggiunge il proxy dell'ambiente alle richieste verso api.netlify.com.
 set -euo pipefail
 SITE_ID="d34b7ae6-c7c7-450c-a8f4-b66e0d63053f"
-SITE_URL="https://presenze-attendance.netlify.app"
+SITE_URL="https://attendance-app-it.netlify.app"
 API="https://api.netlify.com/api/v1"
 cd "$(dirname "$0")/.."
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
