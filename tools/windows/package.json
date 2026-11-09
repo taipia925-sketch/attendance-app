@@ -1,0 +1,8 @@
+{
+  "name": "attendance",
+  "productName": "Attendance",
+  "version": "1.0.0",
+  "description": "Attendance – il file presenze del mese",
+  "main": "main.js",
+  "author": "Attendance"
+}

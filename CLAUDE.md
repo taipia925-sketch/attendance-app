@@ -4,6 +4,9 @@
 
 Il sito è pubblicato su **Netlify**: https://attendance-app-it.netlify.app (sito `attendance-app-it`, prima `presenze-attendance`, id d34b7ae6-c7c7-450c-a8f4-b66e0d63053f, team frencli-vora). L'account GitHub è bloccato: niente più GitHub Pages né push. Per pubblicare: `bash tools/deploy_netlify.sh` (carica index.html, sw.js, manifest e icone via API Netlify; il token lo aggiunge il proxy dell'ambiente; verifica i file online tramite l'API). L'utente ha autorizzato a pubblicare gli aggiornamenti su Netlify senza chiedere ogni volta. `sw.js` + `manifest.webmanifest` + `icon-*.png` rendono la webapp installabile e utilizzabile senza rete (strategia "prima la rete": gli aggiornamenti arrivano subito).
 
+## Programma per Windows
+`tools/windows/`: programma Electron (main.js, preload.js, package.json) + installatore NSIS (installer.nsi) + `brand.js` (icona e dati nell'exe, senza wine). Crearlo: `bash tools/windows/build.sh <cartella-scratchpad>` → `Attendance-Setup.exe` (~85 MB, installa per l'utente in %LOCALAPPDATA%\Programs\Attendance, collegamenti su desktop e menu Start; dati in %APPDATA%\Attendance). La pagina è servita da `app://attendance` (origine fissa per localStorage); `window.attDesktop` = programma installato (la guida lo sa). Senza internet usa l'index.html incluso; con internet scarica quello del sito Netlify se diverso e propone di riavviare (aggiornamenti senza reinstallare). L'Excel si salva con la finestra «Salva con nome» (cartella Download). Rifare l'installatore solo se cambiano i file in `tools/windows/`; le modifiche all'app arrivano da sole dal sito.
+
 ## Regola per ogni modifica richiesta
 Ogni modifica va applicata a **entrambe** le versioni:
 1. **Webapp**: il sito su Netlify. Dopo aver verificato la modifica, pubblicala con `bash tools/deploy_netlify.sh` (e fai commit in locale).
