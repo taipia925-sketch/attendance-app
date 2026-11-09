@@ -8,6 +8,8 @@ API="https://api.netlify.com/api/v1"
 cd "$(dirname "$0")/.."
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 FILES=(index.html sw.js manifest.webmanifest icon-192.png icon-512.png)
+# installatore Windows (creato con tools/windows/build.sh, non è nel repository): scaricabile da $SITE_URL/download/attendance-setup.exe (Netlify vuole i nomi in minuscolo)
+[ -f download/attendance-setup.exe ] && FILES+=(download/attendance-setup.exe)
 python3 -c "import zipfile,sys; z=zipfile.ZipFile(sys.argv[1],'w',zipfile.ZIP_DEFLATED); [z.write(f) for f in sys.argv[2:]]; z.close()" "$TMP/sito.zip" "${FILES[@]}"
 curl -sS -X POST -H "Content-Type: application/zip" --data-binary @"$TMP/sito.zip" "$API/sites/$SITE_ID/deploys" -o "$TMP/dep.json"
 DEP=$(python3 -c "import json,sys; j=json.load(open(sys.argv[1])); print(j.get('id') or ''); sys.stderr.write('deploy: %s %s %s\n' % (j.get('id'), j.get('state'), j.get('message') or ''))" "$TMP/dep.json")
