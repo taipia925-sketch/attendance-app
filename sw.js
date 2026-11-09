@@ -13,6 +13,7 @@ self.addEventListener("activate", e => e.waitUntil(
 self.addEventListener("fetch", e => {
   const req = e.request;
   if(req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
+  if(new URL(req.url).pathname.includes("/prova/") && !self.registration.scope.includes("/prova/")) return;   // la versione di prova ha il suo
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const key = req.mode === "navigate" ? new URL("./", self.registration.scope).href : req;
