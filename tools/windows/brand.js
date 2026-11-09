@@ -11,7 +11,7 @@ const vi = ResEdit.Resource.VersionInfo.fromEntries(res.entries)[0];
 const L = { lang: 1033, codepage: 1200 };
 vi.setStringValues(L, { ProductName: 'Attendance', FileDescription: 'Attendance', CompanyName: 'Attendance', InternalName: 'Attendance', OriginalFilename: 'Attendance.exe', LegalCopyright: '' });
 vi.removeStringValue(L, 'OriginalFilename'); vi.setStringValues(L, { OriginalFilename: 'Attendance.exe' });
-vi.setFileVersion(1, 0, 0, 0, 1033); vi.setProductVersion(1, 0, 0, 0, 1033);
+vi.setFileVersion(1, 0, 1, 0, 1033); vi.setProductVersion(1, 0, 1, 0, 1033);
 vi.outputToResourceEntries(res.entries);
 res.outputResource(pe);
 fs.writeFileSync(exe, Buffer.from(pe.generate()));

@@ -1,5 +1,6 @@
 ; Installatore di Attendance per Windows (per l'utente, senza permessi da amministratore)
 Unicode true
+!define VERSION "1.0.1"
 !include "MUI2.nsh"
 Name "Attendance"
 OutFile "Attendance-Setup.exe"
@@ -17,13 +18,23 @@ BrandingText "Attendance"
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "Italian"
-VIProductVersion "1.0.0.0"
+VIProductVersion "${VERSION}.0"
 VIAddVersionKey /LANG=${LANG_ITALIAN} "ProductName" "Attendance"
 VIAddVersionKey /LANG=${LANG_ITALIAN} "FileDescription" "Installazione di Attendance"
-VIAddVersionKey /LANG=${LANG_ITALIAN} "FileVersion" "1.0.0"
-VIAddVersionKey /LANG=${LANG_ITALIAN} "ProductVersion" "1.0.0"
+VIAddVersionKey /LANG=${LANG_ITALIAN} "FileVersion" "${VERSION}"
+VIAddVersionKey /LANG=${LANG_ITALIAN} "ProductVersion" "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ITALIAN} "LegalCopyright" ""
 !define UNKEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Attendance"
+
+; se questa stessa versione è già installata, aprire l'installatore apre direttamente il programma
+Function .onInit
+  ReadRegStr $0 HKCU "${UNKEY}" "DisplayVersion"
+  StrCmp $0 "${VERSION}" 0 done
+  IfFileExists "$LOCALAPPDATA\Programs\Attendance\Attendance.exe" 0 done
+  Exec '"$LOCALAPPDATA\Programs\Attendance\Attendance.exe"'
+  Quit
+  done:
+FunctionEnd
 
 Section "Attendance"
   nsExec::Exec 'taskkill /IM Attendance.exe /F'      ; se è aperto, lo chiude per poterlo aggiornare
@@ -35,7 +46,7 @@ Section "Attendance"
   CreateShortcut "$DESKTOP\Attendance.lnk" "$INSTDIR\Attendance.exe" "" "$INSTDIR\Attendance.exe" 0
   WriteRegStr HKCU "${UNKEY}" "DisplayName" "Attendance"
   WriteRegStr HKCU "${UNKEY}" "DisplayIcon" "$INSTDIR\Attendance.exe"
-  WriteRegStr HKCU "${UNKEY}" "DisplayVersion" "1.0.0"
+  WriteRegStr HKCU "${UNKEY}" "DisplayVersion" "${VERSION}"
   WriteRegStr HKCU "${UNKEY}" "Publisher" "Attendance"
   WriteRegStr HKCU "${UNKEY}" "InstallLocation" "$INSTDIR"
   WriteRegStr HKCU "${UNKEY}" "UninstallString" '"$INSTDIR\Disinstalla Attendance.exe"'
