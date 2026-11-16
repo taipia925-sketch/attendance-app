@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
     static final String START = "https://" + HOST + "/index.html";
     static final String SITE = "https://attendance-app-it.netlify.app/index.html";
     static final String XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static final int VERSION = 1;            // uguale a android:versionCode
+    static final int VERSION = 2;            // uguale a android:versionCode
     static final int REQ_FILE = 1, REQ_SAVE = 2;
 
     WebView web;

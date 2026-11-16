@@ -1,4 +1,4 @@
-# Pubblica SOLO prova/index.html su Netlify, lasciando intatto tutto il resto del sito
+# Pubblica SOLO i file indicati (di base prova/index.html) su Netlify, lasciando intatto tutto il resto del sito
 # (compresi installatore Windows e APK, che non sono in questo contenitore): deploy "a impronte".
 import json, hashlib, subprocess, sys, time, urllib.request
 SITE="d34b7ae6-c7c7-450c-a8f4-b66e0d63053f"; API="https://api.netlify.com/api/v1"
@@ -12,7 +12,9 @@ cur=site["published_deploy"]["id"]
 files=json.loads(call("GET",f"{API}/deploys/{cur}/files"))
 mp={f["id"]:f["sha"] for f in files}
 print("file online ora:",len(mp)); 
+# uso: deploy_prova.py [/percorso/sul/sito=file_locale ...]   (senza argomenti: solo /prova/index.html)
 local={"/prova/index.html":"prova/index.html"}
+if len(sys.argv)>1: local={a.split("=",1)[0]:a.split("=",1)[1] for a in sys.argv[1:]}
 for k,v in local.items(): mp[k]=hashlib.sha1(open(v,"rb").read()).hexdigest()
 d=json.loads(call("POST",f"{API}/sites/{SITE}/deploys",json.dumps({"files":mp}).encode()))
 dep=d["id"]; req=d.get("required",[]); print("deploy",dep,"da caricare:",len(req))
