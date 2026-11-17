@@ -7,7 +7,11 @@
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"; REPO="$(cd "$HERE/../.." && pwd)"
 W="${1:?indica una cartella di lavoro}"; mkdir -p "$W"; cd "$W"
-JAR=/usr/lib/android-sdk/platforms/android-23/android.jar
+JAR=/usr/lib/android-sdk/platforms/android-23/android.jar      # per le risorse (aapt)
+# per compilare il Java con le API recenti (targetSdk 36): android-all 16 da Maven Central, es.
+#   curl -o android-all-16.jar https://repo1.maven.org/maven2/org/robolectric/android-all/16-robolectric-13921718/android-all-16-robolectric-13921718.jar
+# e poi: ANDROID_JAR_NEW=/percorso/android-all-16.jar bash tools/android/build.sh <cartella>
+JAR_NEW="${ANDROID_JAR_NEW:-$JAR}"
 KD="$REPO/android-key"; KS="$KD/attendance.jks"; KP="$KD/password.txt"
 if [ ! -f "$KS" ]; then
   mkdir -p "$KD"; python3 -c "import secrets; print(secrets.token_urlsafe(24))" > "$KP"
@@ -16,7 +20,7 @@ if [ ! -f "$KS" ]; then
 fi
 rm -rf apk && mkdir -p apk/classes apk/assets/www && cd apk
 cp "$REPO/index.html" "$REPO/icon-192.png" "$REPO/icon-512.png" assets/www/
-javac -nowarn --release 8 -cp "$JAR" -d classes $(find "$HERE/src" -name '*.java') 2>&1 | grep -v "JAVA_TOOL_OPTIONS" || true
+javac -nowarn -source 8 -target 8 -cp "$JAR_NEW" -d classes $(find "$HERE/src" -name '*.java') 2>&1 | grep -v "JAVA_TOOL_OPTIONS" || true
 dalvik-exchange --dex --min-sdk-version=24 --output=classes.dex classes
 aapt package -f -M "$HERE/AndroidManifest.xml" -S "$HERE/res" -A assets -I "$JAR" -F unsigned.apk
 aapt add unsigned.apk classes.dex >/dev/null
