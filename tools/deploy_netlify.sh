@@ -8,6 +8,8 @@ API="https://api.netlify.com/api/v1"
 cd "$(dirname "$0")/.."
 TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
 FILES=(index.html sw.js manifest.webmanifest icon-192.png icon-512.png)
+# versione di prova (nuova interfaccia a calendario): $SITE_URL/prova/ — i programmi Windows/Android usano solo /index.html
+[ -f prova/index.html ] && FILES+=(prova/index.html prova/sw.js prova/manifest.webmanifest prova/icon-192.png prova/icon-512.png)
 # installatore Windows (creato con tools/windows/build.sh, non è nel repository): scaricabile da $SITE_URL/download/attendance-setup.exe (Netlify vuole i nomi in minuscolo)
 [ -f download/attendance-setup.exe ] && FILES+=(download/attendance-setup.exe)
 # app Android (creata con tools/android/build.sh): scaricabile da $SITE_URL/download/attendance.apk

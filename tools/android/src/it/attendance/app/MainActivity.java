@@ -5,9 +5,17 @@ import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Insets;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -16,6 +24,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +47,7 @@ public class MainActivity extends Activity {
     static final String START = "https://" + HOST + "/index.html";
     static final String SITE = "https://attendance-app-it.netlify.app/index.html";
     static final String XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static final int VERSION = 1;            // uguale a android:versionCode
+    static final int VERSION = 3;            // uguale a android:versionCode
     static final int REQ_FILE = 1, REQ_SAVE = 2;
 
     WebView web;
@@ -50,8 +59,7 @@ public class MainActivity extends Activity {
         super.onCreate(b);
         dropStaleUpdate();
         web = new WebView(this);
-        setContentView(web);
-        try { getWindow().setStatusBarColor(0xFF4F46E5); } catch (Exception e) { }
+        setupWindow();
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
@@ -98,6 +106,46 @@ public class MainActivity extends Activity {
         });
         web.loadUrl(START);
         new Thread(new Runnable() { public void run() { checkUpdate(); } }).start();
+    }
+
+    /* Android 15+ disegna l'app a tutto schermo, anche sotto la barra di stato e la barra dei gesti:
+       lascio all'app solo l'area libera (e la tastiera quando compare), il resto ha il colore della pagina */
+    void setupWindow() {
+        final boolean night = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        final int bg = night ? 0xFF161920 : 0xFFFFFFFF;
+        FrameLayout root = new FrameLayout(this);
+        root.setBackgroundColor(bg);
+        root.addView(web, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        setContentView(root);
+        try { getWindow().setStatusBarColor(bg); getWindow().setNavigationBarColor(bg); } catch (Exception e) { }
+        if (Build.VERSION.SDK_INT >= 30) {
+            try {
+                WindowInsetsController c = getWindow().getInsetsController();
+                int m = WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS | WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+                if (c != null) c.setSystemBarsAppearance(night ? 0 : m, m);       // icone scure su sfondo chiaro e viceversa
+            } catch (Exception e) { }
+        }
+        root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @SuppressWarnings("deprecation")
+            @Override public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
+                int l, t, r, b;
+                if (Build.VERSION.SDK_INT >= 30) {
+                    Insets bars = in.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                    Insets ime = in.getInsets(WindowInsets.Type.ime());
+                    l = bars.left; t = bars.top; r = bars.right; b = Math.max(bars.bottom, ime.bottom);
+                } else {
+                    l = in.getSystemWindowInsetLeft(); t = in.getSystemWindowInsetTop(); r = in.getSystemWindowInsetRight(); b = in.getSystemWindowInsetBottom();
+                }
+                v.setPadding(l, t, r, b);
+                return Build.VERSION.SDK_INT >= 30 ? WindowInsets.CONSUMED : in.consumeSystemWindowInsets();
+            }
+        });
+        root.requestApplyInsets();
+        if (Build.VERSION.SDK_INT >= 33) {      // «indietro» con i gesti di Android recente
+            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvokedCallback() {
+                @Override public void onBackInvoked() { if (web != null && web.canGoBack()) web.goBack(); else finish(); }
+            });
+        }
     }
 
     static WebResourceResponse notFound() {
